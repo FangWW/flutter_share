@@ -43,7 +43,7 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
         //File url
         if (fileUrl != nil && fileUrl != "") {
             let filePath = URL(fileURLWithPath: fileUrl!)
-            if let image = load(fileName: fileUrl) {
+            if let image = load(fileName: fileUrl!) {
                 sharedItems.append(image as! AnyObject)
             } else {
                 sharedItems.append(filePath as NSObject)
