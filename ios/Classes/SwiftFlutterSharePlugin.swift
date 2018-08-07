@@ -38,7 +38,7 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
         //let message = args!["message"] as? String
         let fileUrl = args!["fileUrl"] as? String
         
-        var sharedItems : Array<AnyObject> = Array()
+        var sharedItems : Array<Any> = Array()
         
         //File url
         if (fileUrl != nil && fileUrl != "") {
