@@ -40,7 +40,11 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
         //File url
         if (fileUrl != nil && fileUrl != "") {
             let filePath = URL(fileURLWithPath: fileUrl!)
-            sharedItems.append(filePath as NSObject);
+            if let image = load(filePath) {
+                shared.append(image as! AnyObject)
+            } else {
+                sharedItems.append(filePath as NSObject)
+            }
         }
         
         let activityViewController = UIActivityViewController(activityItems: sharedItems, applicationActivities: nil)
@@ -62,4 +66,14 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
     
     
   }
+    private func load(fileName: String) -> UIImage? {
+        let fileURL = documentsUrl.appendingPathComponent(fileName)
+        do {
+            let imageData = try Data(contentsOf: fileURL)
+            return UIImage(data: imageData)
+        } catch {
+            print("Error loading image : \(error)")
+        }
+        return nil
+    }
 }
