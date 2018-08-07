@@ -5,6 +5,9 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
     
   private var result: FlutterResult?
   private var viewController: UIViewController?
+    var documentsUrl: URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
     
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "flutter_share", binaryMessenger: registrar.messenger())
@@ -40,8 +43,8 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
         //File url
         if (fileUrl != nil && fileUrl != "") {
             let filePath = URL(fileURLWithPath: fileUrl!)
-            if let image = load(filePath) {
-                shared.append(image as! AnyObject)
+            if let image = load(fileName: fileUrl) {
+                sharedItems.append(image as! AnyObject)
             } else {
                 sharedItems.append(filePath as NSObject)
             }
