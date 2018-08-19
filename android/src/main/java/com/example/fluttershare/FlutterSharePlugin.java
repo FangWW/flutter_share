@@ -2,6 +2,7 @@ package com.example.fluttershare;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import java.io.File;
@@ -13,8 +14,6 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
-
-import org.apache.commons.io.FileUtils;
 
 
 /** FlutterSharePlugin */
@@ -50,49 +49,15 @@ public class FlutterSharePlugin implements MethodCallHandler {
                     Log.println(Log.INFO, "", "FlutterShare: ShareLocalFile Warning: fileUrl null or empty");
                     return;
                 }
-
-                String fileName = Uri.parse(fileUrl).getLastPathSegment();
-
-                File oldFile = new File(fileUrl);
-
-                byte[] bArray = FileUtils.readFileToByteArray(oldFile);
-
-                String tempDirPath = mRegistrar.context().getExternalCacheDir()
-                        + File.separator + "TempFiles" + File.separator;
-                String path = tempDirPath + fileName;
-
-                File tempDir = new File(tempDirPath);
-
-                f = new File(path);
-                try {
-                    if (!tempDir.exists())
-                        tempDir.mkdirs();
-                    else {
-                        DeleteAllTempFiles();
-                    }
-
-                    f.createNewFile();
-
-
-                    //write the bytes in file
-                    FileOutputStream fo = new FileOutputStream(f);
-                    fo.write(bArray);
-                    // remember close de FileOutput
-                    fo.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                Uri fileUri = Uri.fromFile(f);
-
+                String authorities = mRegistrar.context().getPackageName() + ".flutter_share";
+                Uri providerUri = FileProvider.getUriForFile(mRegistrar.context(), authorities, new File(Uri.parse(fileUrl).getPath()));
 
                 Intent intent = new Intent();
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setAction(Intent.ACTION_SEND);
                 intent.setType("*/*");
-                intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+                intent.putExtra(Intent.EXTRA_STREAM, providerUri);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 Intent chooserIntent = Intent.createChooser(intent, title);
@@ -116,6 +81,7 @@ public class FlutterSharePlugin implements MethodCallHandler {
             result.notImplemented();
         }
     }
+
 
     public void DeleteAllTempFiles(){
         String tempDirPath = mRegistrar.context().getExternalCacheDir()
