@@ -16,7 +16,9 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 
-/** FlutterSharePlugin */
+/**
+ * FlutterSharePlugin
+ */
 public class FlutterSharePlugin implements MethodCallHandler {
 
     private Registrar mRegistrar;
@@ -25,7 +27,9 @@ public class FlutterSharePlugin implements MethodCallHandler {
         this.mRegistrar = mRegistrar;
     }
 
-    /** Plugin registration. */
+    /**
+     * Plugin registration.
+     */
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_share");
         FlutterSharePlugin plugin = new FlutterSharePlugin(registrar);
@@ -42,10 +46,8 @@ public class FlutterSharePlugin implements MethodCallHandler {
             //String message = call.argument("message");
             String fileUrl = call.argument("fileUrl");
 
-            try
-            {
-                if (fileUrl == null || fileUrl == "")
-                {
+            try {
+                if (fileUrl == null || fileUrl == "") {
                     Log.println(Log.INFO, "", "FlutterShare: ShareLocalFile Warning: fileUrl null or empty");
                     return;
                 }
@@ -56,7 +58,11 @@ public class FlutterSharePlugin implements MethodCallHandler {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setAction(Intent.ACTION_SEND);
-                intent.setType("*/*");
+                if (fileUrl.toLowerCase().endsWith(".jpg") || fileUrl.toLowerCase().endsWith(".png") || fileUrl.toLowerCase().endsWith(".gif") || fileUrl.toLowerCase().endsWith(".jpeg")) {
+                    intent.setType("image/*");
+                } else {
+                    intent.setType("*/*");
+                }
                 intent.putExtra(Intent.EXTRA_STREAM, providerUri);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
@@ -65,14 +71,11 @@ public class FlutterSharePlugin implements MethodCallHandler {
                 chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mRegistrar.context().startActivity(chooserIntent);
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 if (ex != null)
                     Log.println(Log.INFO, "", "FlutterShare: Error");
 
-            }
-            finally {
+            } finally {
                 if (f != null)
                     f.deleteOnExit();
             }
@@ -83,7 +86,7 @@ public class FlutterSharePlugin implements MethodCallHandler {
     }
 
 
-    public void DeleteAllTempFiles(){
+    public void DeleteAllTempFiles() {
         String tempDirPath = mRegistrar.context().getExternalCacheDir()
                 + File.separator + "TempFiles" + File.separator;
 
@@ -92,8 +95,7 @@ public class FlutterSharePlugin implements MethodCallHandler {
         if (tempDir.exists()) {
 
             String[] children = tempDir.list();
-            for (int i = 0; i < children.length; i++)
-            {
+            for (int i = 0; i < children.length; i++) {
                 new File(tempDir, children[i]).delete();
             }
         }
