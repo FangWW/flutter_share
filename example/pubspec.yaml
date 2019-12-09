@@ -13,6 +13,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  documents_picker: ^0.0.2
   flutter_share:
     path: ../
 
