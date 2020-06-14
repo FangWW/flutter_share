@@ -2,7 +2,7 @@
   package="com.example.fluttershare">
     <application>
         <provider
-            android:name="androidx.core.content.FileProvider"
+            android:name=".ShareFileProvider"
             android:authorities="${applicationId}.flutter_share"
             android:exported="false"
             android:grantUriPermissions="true">
